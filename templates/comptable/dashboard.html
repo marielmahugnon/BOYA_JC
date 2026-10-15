@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto py-4">
+    <!-- En-tête du Comptable -->
+    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-blue-600 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-blue-900">Espace Comptabilité & Gestion</h1>
+            <p class="text-gray-600 mt-1">Consultation des pointages et des présences du personnel.</p>
+        </div>
+        <a href="{{ url_for('comptable_export_pdf') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+            📄 Exporter le Rapport PDF
+        </a>
+    </div>
+
+    <!-- Tableau des pointages -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Historique Général des Présences</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold border-b">
+                        <th class="p-3">Employé / Prof</th>
+                        <th class="p-3">Rôle</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3">Arrivée</th>
+                        <th class="p-3">Sortie</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for a in attendances %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="p-3 font-semibold text-gray-900">{{ a.user.prenom }} {{ a.user.nom }}</td>
+                        <td class="p-3 text-gray-600">{{ a.user.role|capitalize }}</td>
+                        <td class="p-3 font-medium text-blue-600">{{ a.date.strftime('%d/%m/%Y') if a.date else '-' }}</td>
+                        <td class="p-3 text-gray-700 font-mono">{{ a.heure_pointage.strftime('%H:%M:%S') if a.heure_pointage else '-' }}</td>
+                        <td class="p-3 text-gray-700 font-mono">{{ a.heure_fin.strftime('%H:%M:%S') if a.heure_fin else 'En cours' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-gray-500 italic">Aucun pointage enregistré.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

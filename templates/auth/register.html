@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="flex justify-center items-center py-12">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg border border-gray-100">
+        <div class="text-center mb-6">
+            <h2 class="text-3xl font-extrabold text-primary">Inscription - BOYA JC</h2>
+            <p class="text-sm text-gray-500 mt-1">Créez votre compte utilisateur</p>
+        </div>
+
+        <form method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nom</label>
+                    <input type="text" name="nom" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Prénom</label>
+                    <input type="text" name="prenom" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Adresse Email</label>
+                <input type="email" name="email" required
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none"
+                    placeholder="nom@exemple.com">
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Mot de passe</label>
+                    <input type="password" name="password" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+                </div>
+               <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Rôle demandé</label>
+                    <select name="role" id="role-select" onchange="adaptFormFields()"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+                        <option value="enseignant">Enseignant</option>
+                        <option value="personnel">Personnel (Surveillant / Administratif)</option>
+                        <option value="comptable">Comptable</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Champ Dynamique : Matière (Enseignant uniquement) -->
+            <div id="field-matiere" class="transition-all">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Matière enseignée</label>
+                <input type="text" name="matiere" id="input-matiere" placeholder="Ex: Mathématiques, Physique..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+            </div>
+
+            <!-- Champ Dynamique : Fonction / Poste (Personnel uniquement) -->
+            <div id="field-fonction" class="transition-all hidden">
+                <label class="block text-sm font-semibold text-gray-700 mb-1">Fonction / Intitulé du poste</label>
+                <input type="text" name="fonction" id="input-fonction" placeholder="Ex: Surveillant général, Secrétaire..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:outline-none">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-primary hover:bg-blue-900 text-white font-bold py-2.5 rounded-lg transition shadow-md mt-4">
+                S'inscrire
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-gray-100 pt-4">
+            <p class="text-sm text-gray-600">Vous avez déjà un compte ?
+                <a href="{{ url_for('login') }}" class="text-secondary font-semibold hover:underline">Se connecter</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Script pour adapter les champs dynamiquement selon le rôle choisi -->
+<script>
+    function adaptFormFields() {
+        const role = document.getElementById('role-select').value;
+        const fieldMatiere = document.getElementById('field-matiere');
+        const fieldFonction = document.getElementById('field-fonction');
+
+        const inputMatiere = document.getElementById('input-matiere');
+        const inputFonction = document.getElementById('input-fonction');
+
+        if (role === 'enseignant') {
+            fieldMatiere.classList.remove('hidden');
+            fieldFonction.classList.add('hidden');
+            inputMatiere.required = true;
+            inputFonction.required = false;
+            inputFonction.value = '';
+        } else if (role === 'personnel') {
+            fieldMatiere.classList.add('hidden');
+            fieldFonction.classList.remove('hidden');
+            inputMatiere.required = false;
+            inputFonction.required = true;
+            inputMatiere.value = '';
+        } else if (role === 'comptable') {
+            fieldMatiere.classList.add('hidden');
+            fieldFonction.classList.add('hidden');
+            inputMatiere.required = false;
+            inputFonction.required = false;
+            inputMatiere.value = '';
+            inputFonction.value = '';
+        }
+    }
+
+    // Exécution initiale au chargement de la page
+    document.addEventListener('DOMContentLoaded', adaptFormFields);
+</script>
+{% endblock %}

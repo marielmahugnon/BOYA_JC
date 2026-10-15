@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="15"> <!-- Auto-refresh toutes les 15s -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOYA JC - Pointage Salle des Profs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col justify-center items-center p-4">
+    <div class="bg-white text-gray-800 p-8 rounded-2xl shadow-2xl text-center max-w-md w-full border-4 border-sky-500">
+        <h1 class="text-3xl font-black text-blue-900 mb-1">BOYA JC</h1>
+        <p class="text-sm font-semibold text-gray-500 mb-6">Borne de Pointage Enseignants</p>
+
+        <!-- Image du QR Code -->
+        <div class="flex justify-center mb-6">
+            <img src="data:image/png;base64,{{ qr_b64 }}" alt="QR Code Pointage" class="w-64 h-64 border-2 border-gray-200 rounded-lg p-2 shadow-inner">
+        </div>
+
+        <div class="space-y-2">
+            <p class="text-xs text-gray-400">Scannez ce code depuis votre espace enseignant</p>
+            <p class="text-xs font-mono text-sky-600 font-bold bg-sky-50 py-1 rounded">Mise à jour automatique (15s)</p>
+        </div>
+    </div>
+</body>
+</html>

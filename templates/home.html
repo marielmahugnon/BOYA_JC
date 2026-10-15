@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOYA JC - Bienvenue</title>
+    <!-- Tailwind CSS pour un rendu propre et moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#0284C7',
+                        darkbg: '#1E1B4B' /* Fond violet/bleu foncé */
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-darkbg text-white min-h-screen flex flex-col justify-between p-6 relative overflow-hidden font-sans">
+
+    <!-- Motifs décoratifs de fond en arrière-plan -->
+    <div class="absolute -top-20 -left-20 w-96 h-96 bg-primary opacity-30 rounded-full filter blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-20 -right-20 w-96 h-96 bg-secondary opacity-20 rounded-full filter blur-3xl pointer-events-none"></div>
+
+    <!-- En-tête / Logo -->
+    <div class="flex justify-between items-center z-10">
+        <span class="text-2xl font-black tracking-wider bg-white text-primary px-3 py-1 rounded shadow">BOYA JC</span>
+    </div>
+
+    <!-- Contenu Principal -->
+    <div class="my-auto z-10 max-w-md w-full mx-auto text-center space-y-6">
+        <h1 class="text-4xl font-extrabold tracking-tight">
+            Bienvenue sur <br><span class="text-sky-400">BOYA JC</span>
+        </h1>
+        <p class="text-blue-200 text-lg">
+            Plateforme intelligente de gestion des présences.
+        </p>
+
+        <!-- Boutons d'action -->
+        <div class="pt-6 space-y-3">
+            <a href="{{ url_for('login') }}" class="block w-full bg-secondary hover:bg-sky-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg transition duration-200">
+                Se connecter
+            </a>
+            <a href="{{ url_for('register') }}" class="block w-full bg-white/10 hover:bg-white/20 text-white border border-white/20 font-semibold py-3.5 px-6 rounded-xl transition duration-200">
+                Créer un compte
+            </a>
+        </div>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="text-center z-10 text-xs text-blue-300/60 space-y-1">
+        <p>&copy; 2026 BOYA JC - Système de Gestion Scolaire</p>
+        <p class="font-mono text-[10px]">v1.0.0</p>
+    </div>
+
+</body>
+</html>

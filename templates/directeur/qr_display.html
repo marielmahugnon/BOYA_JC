@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-md mx-auto py-10">
+    <div class="bg-white rounded-xl shadow-lg p-6 text-center space-y-6 border border-gray-100">
+        <h1 class="text-2xl font-bold text-primary">QR Code de Validation</h1>
+        <p class="text-gray-600 text-sm">Présentez ce QR Code aux enseignants pour valider leurs accès ou pointages.</p>
+
+        <!-- Image / Affichage du QR Code -->
+        <div class="p-4 bg-gray-50 border rounded-xl inline-block">
+            {% if qr_code_url %}
+                <img src="{{ qr_code_url }}" alt="QR Code Directeur" class="w-64 h-64 mx-auto">
+            {% else %}
+                <p class="text-red-500 font-semibold text-sm">Aucun QR code généré pour ce compte.</p>
+            {% endif %}
+        </div>
+
+        <div>
+            <a href="{{ url_for('directeur_dashboard') }}" style="color: #0284C7; font-weight: 600; text-decoration: none;">
+                &larr; Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

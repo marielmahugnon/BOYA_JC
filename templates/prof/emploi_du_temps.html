@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="space-y-6 max-w-7xl mx-auto py-4">
+    
+    <!-- En-tête principal avec bouton de retour -->
+    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-secondary flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-primary">Gestion de l'Emploi du Temps</h1>
+            <p class="text-gray-600 mt-1">Renseignez et consultez vos créneaux de cours hebdomadaires.</p>
+        </div>
+        <a href="{{ url_for('prof_dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg transition border border-gray-300 inline-flex items-center gap-2 text-sm shadow-sm">
+            ⬅️ Retour au tableau de bord
+        </a>
+    </div>
+
+    <!-- Grille Formulaire + Tableau -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Formulaire de saisie d'un cours -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100 h-fit">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Ajouter un créneau</h2>
+
+            <form action="{{ url_for('prof_schedule') }}" method="POST" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Jour de la semaine</label>
+                    <select name="jour" required class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent bg-white">
+                        <option value="Lundi">Lundi</option>
+                        <option value="Mardi">Mardi</option>
+                        <option value="Mercredi">Mercredi</option>
+                        <option value="Jeudi">Jeudi</option>
+                        <option value="Vendredi">Vendredi</option>
+                        <option value="Samedi">Samedi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Matière</label>
+                    <input type="text" name="matiere" required placeholder="Ex: Mathématiques, SVT..." class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Classe / Salle</label>
+                    <input type="text" name="classe" placeholder="Ex: Terminale C, Salle 04..." class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Heure Début</label>
+                        <input type="time" name="heure_debut" required class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Heure Fin</label>
+                        <input type="time" name="heure_fin" required class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-secondary hover:bg-sky-600 text-white font-semibold py-2.5 rounded-lg transition shadow-sm flex items-center justify-center gap-2">
+                    ➕ Enregistrer le créneau
+                </button>
+            </form>
+        </div>
+
+        <!-- Tableau d'affichage des créneaux de l'enseignant -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-md p-6 border border-gray-100">
+            <h2 class="text-lg font-bold text-gray-800 mb-4">Mes créneaux enregistrés</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-gray-50 text-gray-600 uppercase text-xs font-semibold border-b">
+                            <th class="p-3">Jour</th>
+                            <th class="p-3">Horaires</th>
+                            <th class="p-3">Matière</th>
+                            <th class="p-3">Classe</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for course in courses %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="p-3 font-semibold text-primary">{{ course.jour }}</td>
+                            <td class="p-3 font-mono text-gray-700">{{ course.heure_debut }} - {{ course.heure_fin }}</td>
+                            <td class="p-3 font-medium text-gray-900">{{ course.matiere }}</td>
+                            <td class="p-3 text-gray-600">{{ course.classe or '-' }}</td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="p-6 text-center text-gray-500 italic">
+                                Aucun créneau enregistré pour le moment.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

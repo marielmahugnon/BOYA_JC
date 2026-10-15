@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-6 px-4 space-y-6">
+    <!-- Formulaire de demande -->
+    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Nouvelle demande de permission / congé</h2>
+
+        <form action="{{ url_for('prof_demande_conge') }}" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Type de demande</label>
+                <select name="type_demande" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" required>
+                    <option value="Permission d'absence">Permission d'absence (Courte durée)</option>
+                    <option value="Congé maladie">Congé maladie</option>
+                    <option value="Congé personnel">Congé personnel</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date de début</label>
+                    <input type="date" name="date_debut" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Date de fin</label>
+                    <input type="date" name="date_fin" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" required>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Motif de la demande</label>
+                <textarea name="motif" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="Précisez la raison de votre absence..." required></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition shadow">
+                Soumettre la demande
+            </button>
+        </form>
+    </div>
+
+    <!-- Historique des demandes -->
+    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 overflow-hidden">
+        <h3 class="text-lg font-bold text-gray-800 mb-3">Mes demandes récentes</h3>
+        <div class="space-y-3">
+            {% for d in demandes %}
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100 gap-3 text-sm">
+                <div class="space-y-1 overflow-hidden">
+                    <p class="font-semibold text-gray-950">{{ d.type_demande }} <span class="text-xs font-normal text-gray-500">(du {{ d.date_debut }} au {{ d.date_fin }})</span></p>
+                    <p class="text-xs text-gray-600 break-words whitespace-normal max-w-xl">{{ d.motif }}</p>
+                </div>
+                <div class="self-end sm:self-center shrink-0">
+                    {% if d.statut == 'Approuvé' %}
+                        <span class="px-2.5 py-1 bg-green-100 text-green-700 font-bold text-xs rounded-full">Approuvé</span>
+                    {% elif d.statut == 'Refusé' %}
+                        <span class="px-2.5 py-1 bg-red-100 text-red-700 font-bold text-xs rounded-full">Refusé</span>
+                    {% else %}
+                        <span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 font-bold text-xs rounded-full">En attente</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p class="text-xs text-gray-400">Aucune demande soumise pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

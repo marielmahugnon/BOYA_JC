@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="space-y-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- En-tête de bienvenue -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-extrabold text-gray-900">Espace Directeur - Administration</h1>
+            <p class="text-gray-500 text-sm mt-1">Bienvenue sur le tableau de bord global de BOYA JC.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ url_for('directeur_demandes_conge') }}" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-4 py-2.5 rounded-lg transition shadow-sm inline-flex items-center gap-2 text-sm">
+                📋 Demandes de congé
+            </a>
+            <button onclick="openQrModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-lg transition shadow-sm inline-flex items-center gap-2 text-sm">
+                🔑 Afficher le QR Code Directeur
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistiques rapides (4 cartes aux couleurs harmonisées) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- 1. Utilisateurs (Bleu / Indigo) -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Utilisateurs</p>
+                <div class="flex items-baseline gap-2 mt-1">
+                    <h3 class="text-2xl font-extrabold text-blue-600">{{ total_users }}</h3>
+                    <span class="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">({{ pending_users }} att.)</span>
+                </div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
+                👥
+            </div>
+        </div>
+
+        <!-- 2. Cours planifiés (Ciel / Sky) -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Cours planifiés</p>
+                <h3 class="text-2xl font-extrabold text-sky-600 mt-1">{{ total_courses }}</h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xl font-bold">
+                📚
+            </div>
+        </div>
+
+        <!-- 3. Pointages (Émeraude / Vert doux) -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Pointages</p>
+                <h3 class="text-2xl font-extrabold text-emerald-600 mt-1">{{ total_attendances if total_attendances is not none else 0 }}</h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                📍
+            </div>
+        </div>
+
+        <!-- 4. Congés & Permissions (Ambre / Jaune) -->
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400">Congés / Perm.</p>
+                <h3 class="text-2xl font-extrabold text-amber-600 mt-1">Gérer</h3>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
+                📋
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Cartes de navigation (4 colonnes) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- 1. Gestion Utilisateurs -->
+        <a href="{{ url_for('directeur_users') }}" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-blue-500 hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+                <h3 class="font-bold text-base text-gray-800 group-hover:text-blue-600 transition">Gestion Utilisateurs</h3>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed">Valider les comptes en attente et gérer l'accès du personnel.</p>
+            </div>
+            <span class="mt-4 text-blue-600 text-xs font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Gérer les comptes &rarr;
+            </span>
+        </a>
+
+        <!-- 2. Gestion des Cours -->
+        <a href="{{ url_for('directeur_cours') }}" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-sky-500 hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+                <h3 class="font-bold text-base text-gray-800 group-hover:text-sky-600 transition">Gestion des Cours</h3>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed">Planifier, modifier ou supprimer les emplois du temps.</p>
+            </div>
+            <span class="mt-4 text-sky-600 text-xs font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Gérer les cours &rarr;
+            </span>
+        </a>
+
+        <!-- 3. Suivi des Pointages -->
+        <a href="{{ url_for('directeur_pointages') }}" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-emerald-500 hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+                <h3 class="font-bold text-base text-gray-800 group-hover:text-emerald-600 transition">Suivi des Pointages</h3>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed">Surveiller les présences, filtrer par jour, mois ou année.</p>
+            </div>
+            <span class="mt-4 text-emerald-600 text-xs font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Voir les rapports &rarr;
+            </span>
+        </a>
+
+        <!-- 4. Congés & Permissions -->
+        <a href="{{ url_for('directeur_demandes_conge') }}" class="bg-white p-5 rounded-xl shadow-sm border border-gray-100 hover:border-amber-500 hover:shadow-md transition flex flex-col justify-between group">
+            <div>
+                <h3 class="font-bold text-base text-gray-800 group-hover:text-amber-600 transition">Congés & Permissions</h3>
+                <p class="text-xs text-gray-500 mt-2 leading-relaxed">Examiner, approuver ou refuser les demandes d'absence.</p>
+            </div>
+            <span class="mt-4 text-amber-600 text-xs font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                Consulter les demandes &rarr;
+            </span>
+        </a>
+
+    </div>
+</div>
+
+<!-- Modale de vérification du mot de passe -->
+<div id="qrModal" class="hidden fixed inset-0 bg-gray-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 class="text-lg font-bold text-gray-800">Confirmation de sécurité</h3>
+            <button onclick="closeQrModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+        </div>
+
+        <p class="text-sm text-gray-600">
+            Veuillez entrer votre mot de passe pour afficher le QR code de validation.
+        </p>
+
+        <form id="qrForm" action="{{ url_for('directeur_verify_qr') }}" method="POST" target="_blank" onsubmit="handleQrSubmit()" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Mot de passe du Directeur</label>
+                <input type="password" id="qrPasswordInput" name="password" required class="mt-1 w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2">
+                <button type="button" onclick="closeQrModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-semibold">
+                    Annuler
+                </button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold">
+                    Confirmer & Afficher
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openQrModal() {
+        document.getElementById('qrModal').classList.remove('hidden');
+        document.getElementById('qrPasswordInput').focus();
+    }
+
+    function closeQrModal() {
+        document.getElementById('qrModal').classList.add('hidden');
+        document.getElementById('qrPasswordInput').value = '';
+    }
+
+    function handleQrSubmit() {
+        setTimeout(() => {
+            closeQrModal();
+        }, 300);
+    }
+</script>
+{% endblock %}

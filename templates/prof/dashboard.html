@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6 py-6">
+    <!-- En-tête Enseignant / Personnel -->
+    <div class="bg-white rounded-xl shadow-md p-6 border-l-4 border-secondary flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-primary">Espace {{ current_user.role|capitalize }}</h1>
+            <p class="text-gray-600 mt-1">
+                Bienvenue, <strong>{{ current_user.prenom }} {{ current_user.nom }}</strong>
+                {% if current_user.matiere_fonction %}
+                    ({{ current_user.matiere_fonction }})
+                {% endif %}
+            </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ url_for('prof_schedule') }}" class="bg-primary hover:bg-blue-900 text-white px-4 py-2.5 rounded-lg font-bold shadow transition inline-flex items-center gap-2">
+                📅 Renseigner l'emploi du temps
+            </a>
+            <a href="{{ url_for('prof_scan') }}" class="bg-primary hover:bg-blue-900 text-white px-4 py-2.5 rounded-lg font-bold shadow transition inline-flex items-center gap-2">
+                📷 Scanner un QR Code
+            </a>
+            <a href="{{ url_for('prof_demande_conge') }}" class="bg-primary hover:bg-blue-900 text-white px-4 py-2.5 rounded-lg font-bold shadow transition inline-flex items-center gap-2">
+    ✉️ Demander un congé
+</a>
+        </div>
+    </div>
+
+    <!-- Info Rôle & Spécialité -->
+    <div class="bg-blue-50 border-l-4 border-secondary p-4 rounded-r-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm">
+        <div>
+            <span class="font-semibold text-gray-700">Rôle :</span>
+            <span class="capitalize text-secondary font-bold">{{ current_user.role }}</span>
+        </div>
+        {% if current_user.matiere_fonction %}
+        <div>
+            <span class="font-semibold text-gray-700">Spécialité / Fonction :</span>
+            <span class="text-gray-800 font-bold">{{ current_user.matiere_fonction }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Emploi du Temps -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
+        <h2 class="text-xl font-bold text-primary mb-4">Mon Emploi du Temps</h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 border-b border-gray-200 text-primary text-xs uppercase tracking-wider">
+                        <th class="p-3">Jour</th>
+                        <th class="p-3">Horaire</th>
+                        <th class="p-3">Classe</th>
+                        <th class="p-3">Matière</th>
+                        <th class="p-3">Statut</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm">
+                    {% if current_user.courses %}
+                        {% for c in current_user.courses %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="p-3 font-semibold text-gray-800">{{ c.jour }}</td>
+                            <td class="p-3 text-gray-600 font-mono">{{ c.heure_debut }} - {{ c.heure_fin }}</td>
+                            <td class="p-3 font-medium">{{ c.classe }}</td>
+                            <td class="p-3 text-gray-600">{{ c.matiere }}</td>
+                            <td class="p-3">
+                                {% if c.is_approved %}
+                                    <span class="px-2.5 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Validé</span>
+                                {% else %}
+                                    <span class="px-2.5 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">En attente</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="p-6 text-center text-gray-500 italic">
+                                Aucun cours n'est encore enregistré dans votre emploi du temps.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

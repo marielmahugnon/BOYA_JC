@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-6">
+    <div class="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 class="text-2xl font-black text-gray-800">Gestion des demandes de congé et permission</h1>
+            <a href="{{ url_for('directeur_dashboard') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-lg transition text-sm">
+                &larr; Retour au tableau de bord
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-left">
+                <thead>
+                    <tr class="bg-gray-50">
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Enseignant</th>
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase">Type</th>
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase whitespace-nowrap">Période</th>
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase w-1/3">Motif</th>
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase text-center">Statut</th>
+                        <th class="px-4 py-3 text-xs font-bold text-gray-500 uppercase text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 text-sm">
+                    {% for d in demandes %}
+                    <tr class="hover:bg-gray-50/50 transition">
+                        <td class="px-4 py-3 font-semibold text-gray-800 whitespace-nowrap">
+                            {{ d.prof.nom if d.prof else 'N/A' }}
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-medium">
+                                {{ d.type_demande }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">
+                            Du <span class="font-semibold text-gray-800">{{ d.date_debut }}</span><br>
+                            au <span class="font-semibold text-gray-800">{{ d.date_fin }}</span>
+                        </td>
+                        <td class="px-4 py-3 text-gray-500 italic text-xs break-words whitespace-normal max-w-xs sm:max-w-md">
+                            {{ d.motif }}
+                        </td>
+                        <td class="px-4 py-3 text-center whitespace-nowrap">
+                            {% if d.statut == 'Approuvé' %}
+                                <span class="px-2.5 py-1 bg-green-100 text-green-700 font-bold text-xs rounded-full">Approuvé</span>
+                            {% elif d.statut == 'Refusé' %}
+                                <span class="px-2.5 py-1 bg-red-100 text-red-700 font-bold text-xs rounded-full">Refusé</span>
+                            {% else %}
+                                <span class="px-2.5 py-1 bg-yellow-100 text-yellow-700 font-bold text-xs rounded-full">En attente</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-right whitespace-nowrap">
+                            {% if d.statut == 'En attente' or not d.statut %}
+                            <div class="inline-flex items-center gap-2">
+                                <a href="{{ url_for('traiter_demande_conge', id=d.id, action='approuver') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition shadow-sm">
+                                    Approuver
+                                </a>
+                                <a href="{{ url_for('traiter_demande_conge', id=d.id, action='refuser') }}" class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition shadow-sm">
+                                    Refuser
+                                </a>
+                            </div>
+                            {% else %}
+                                <span class="text-xs text-gray-400 italic">Traité</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-400">Aucune demande enregistrée.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

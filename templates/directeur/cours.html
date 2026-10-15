@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px;">
+
+    <!-- En-tête -->
+    <div style="background: white; border-radius: 12px; padding: 24px; border-left: 4px solid #1E40AF; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1 style="font-size: 24px; font-weight: bold; color: #1E40AF; margin: 0;">Gestion des Cours & Emplois du Temps</h1>
+            <p style="color: #4B5563; margin-top: 4px;">Planifiez les sessions d'enseignement et assignez-les aux enseignants.</p>
+        </div>
+        <a href="{{ url_for('directeur_dashboard') }}" style="color: #0284C7; font-weight: 600; text-decoration: none;">&larr; Retour au tableau de bord</a>
+    </div>
+
+    <!-- Formulaire d'ajout de cours -->
+    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #1E40AF; margin-bottom: 16px;">Planifier un nouveau cours</h2>
+
+        <form method="POST" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: flex-end;">
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 4px;">Matière / Intitulé</label>
+                <input type="text" name="titre" required placeholder="Ex: Mathématiques" style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 4px;">Enseignant Responsable</label>
+                <select name="enseignant_id" style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; background: white;">
+                    <option value="">-- Choisir un enseignant --</option>
+                    {% for prof in enseignants %}
+                        <option value="{{ prof.id }}">{{ prof.prenom }} {{ prof.nom }} ({{ prof.matiere_fonction or 'Général' }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 4px;">Jour de la semaine</label>
+                <select name="jour" required style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px; background: white;">
+                    <option value="Lundi">Lundi</option>
+                    <option value="Mardi">Mardi</option>
+                    <option value="Mercredi">Mercredi</option>
+                    <option value="Jeudi">Jeudi</option>
+                    <option value="Vendredi">Vendredi</option>
+                    <option value="Samedi">Samedi</option>
+                    <option value="Dimanche">Dimanche</option>
+                </select>
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 4px;">Heure de Début</label>
+                <input type="time" name="heure_debut" required style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: bold; color: #374151; margin-bottom: 4px;">Heure de Fin</label>
+                <input type="time" name="heure_fin" required style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 8px; font-size: 14px;">
+            </div>
+
+            <div>
+                <button type="submit" style="width: 100%; background: #1E40AF; color: white; padding: 10px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: background 0.2s;">
+                    + Ajouter le cours
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des cours existants -->
+    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border: 1px solid #E5E7EB;">
+        <h2 style="font-size: 18px; font-weight: bold; color: #1E40AF; margin-bottom: 16px;">Emplois du temps enregistrés</h2>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                <thead>
+                    <tr style="background: #F3F4F6; border-bottom: 2px solid #E5E7EB; color: #1E40AF; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em;">
+                        <th style="padding: 12px;">Matière / Cours</th>
+                        <th style="padding: 12px;">Enseignant</th>
+                        <th style="padding: 12px;">Jour</th>
+                        <th style="padding: 12px;">Horaire</th>
+                        <th style="padding: 12px; text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if courses %}
+                        {% for c in courses %}
+                        <tr style="border-bottom: 1px solid #F3F4F6;">
+                            <td style="padding: 12px; font-weight: bold; color: #1F2937;">{{ c.titre }}</td>
+                            <td style="padding: 12px; color: #4B5563;">
+                                {% if c.enseignant %}
+                                    {{ c.enseignant.prenom }} {{ c.enseignant.nom }}
+                                {% else %}
+                                    <span style="color: #9CA3AF; font-style: italic;">Non assigné</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px; font-weight: 600; color: #0284C7;">{{ c.jour }}</td>
+                            <td style="padding: 12px; font-family: monospace; color: #374151;">{{ c.heure_debut }} - {{ c.heure_fin }}</td>
+                            <td style="padding: 12px; text-align: right;">
+                                <form action="{{ url_for('supprimer_cours', course_id=c.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Voulez-vous vraiment supprimer ce cours ?');">
+                                    <button type="submit" style="background: #FEE2E2; color: #991B1B; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px;">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="5" style="padding: 24px; text-align: center; color: #6B7280; font-style: italic;">
+                                Aucun cours n'a encore été planifié.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

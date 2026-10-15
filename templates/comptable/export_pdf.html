@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport de Pointage - BOYA JC</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #333; margin: 20px; }
+        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #0f172a; padding-bottom: 15px; }
+        .header h1 { margin: 0; color: #0f172a; font-size: 24px; }
+        .header p { margin: 5px 0; color: #666; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+        th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; }
+        th { background-color: #f1f5f9; color: #0f172a; }
+        .footer { margin-top: 40px; display: flex; justify-content: space-between; font-size: 12px; }
+        @media print {
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body onload="window.print()">
+    <div class="no-print" style="background: #e2e8f0; padding: 10px; margin-bottom: 20px; text-align: center; border-radius: 5px;">
+        <button onclick="window.print()" style="background: #0f172a; color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 5px; cursor: pointer;">🖨️ Lancer l'impression / Enregistrer en PDF</button>
+        <p style="margin: 5px 0 0 0; font-size: 12px; color: #555;">La boîte de dialogue d'impression va s'ouvrir automatiquement.</p>
+    </div>
+
+    <div class="header">
+        <h1>ÉTABLISSEMENT BOYA JC</h1>
+        <p><strong>Rapport Officiel de Pointage & Suivi de Présence</strong></p>
+        <p>Généré le : <span id="date-generation"></span></p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Agent / Nom</th>
+                <th>Rôle</th>
+                <th>Date</th>
+                <th>Heure d'Arrivée</th>
+                <th>Heure de Fin</th>
+                <th>Statut</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for att in attendances %}
+            <tr>
+                <td><strong>{{ att.user.username if att.user else 'Inconnu' }}</strong></td>
+                <td>{{ att.user.role if att.user else 'N/A' }}</td>
+                <td>{{ att.date }}</td>
+                <td>{{ att.heure_pointage }}</td>
+                <td>{{ att.heure_fin if att.heure_fin else '-' }}</td>
+                <td>{{ att.statut }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #888;">Aucun pointage enregistré.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <div>Signature du Comptable / Direction</div>
+        <div>Cachet de l'Établissement</div>
+    </div>
+
+    <script>
+        document.getElementById('date-generation').innerText = new Date().toLocaleDateString('fr-FR') + ' à ' + new Date().toLocaleTimeString('fr-FR');
+    </script>
+</body>
+</html>

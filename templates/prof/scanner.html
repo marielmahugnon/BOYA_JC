@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto py-8 space-y-6">
+    <div class="bg-white rounded-xl shadow-lg p-6 space-y-4 text-center">
+        <h1 class="text-2xl font-bold text-primary">Scanner un QR Code</h1>
+        <p class="text-gray-600 text-sm">Positionnez le QR code de la direction devant votre caméra pour enregistrer votre pointage.</p>
+
+        <!-- Conteneur vidéo pour la caméra -->
+        <div id="reader" class="w-full rounded-xl overflow-hidden border-2 border-dashed border-gray-300 bg-black min-h-[250px] flex items-center justify-center">
+            <p class="text-gray-400 text-sm" id="loading-text">Initialisation de la caméra...</p>
+        </div>
+
+        <!-- Formulaire caché qui recevra le token scanné et l'enverra à Flask -->
+        <form id="scanForm" action="{{ url_for('prof_scan') }}" method="POST" class="hidden">
+            <input type="hidden" id="qr_code" name="qr_code">
+        </form>
+
+        <div>
+            <a href="{{ url_for('prof_dashboard') }}" class="text-secondary font-semibold text-sm hover:underline">
+                &larr; Retour au tableau de bord
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Inclusion de la bibliothèque html5-qrcode via CDN -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const html5QrCode = new Html5Qrcode("reader");
+
+        // Configuration du scan
+        const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+            // Arrêter la caméra proprement dès qu'un QR code est détecté
+            html5QrCode.stop().then(() => {
+                // Remplir le champ caché et soumettre le formulaire
+                document.getElementById('qr_code').value = decodedText;
+                document.getElementById('scanForm').submit();
+            }).catch((err) => {
+                console.error("Erreur lors de l'arrêt du scanner : ", err);
+            });
+        };
+
+        const config = { fps: 10, qrbox: { width: 220, height: 220 } };
+
+        // Démarrage automatique de la caméra arrière (facingMode: "environment") ou avant
+        html5QrCode.start(
+            { facingMode: "environment" },
+            config,
+            qrCodeSuccessCallback
+        ).catch((err) => {
+            console.error("Impossible d'accéder à la caméra : ", err);
+            document.getElementById('reader').innerHTML = `
+                <div class="p-4 text-red-400 text-sm">
+                    Impossible d'accéder à la caméra. Veuillez autoriser l'accès ou utiliser un autre appareil.
+                </div>
+            `;
+        });
+    });
+</script>
+{% endblock %}
